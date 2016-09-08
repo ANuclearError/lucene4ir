@@ -1,4 +1,4 @@
-package parse;
+package lucene4ir.parse;
 
 import java.io.IOException;
 import java.io.DataInput;
@@ -15,7 +15,7 @@ import java.util.Set;
 /*
  * From Galago 
  */
-public class WarcRecord {
+class WarcRecord {
 
 	  
 	  public static String WARC_VERSION = "WARC/";
