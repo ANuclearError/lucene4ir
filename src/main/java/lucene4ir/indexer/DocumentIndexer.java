@@ -77,7 +77,6 @@ public class DocumentIndexer {
 
             builder.withTokenizer(tokenFilters.getTokenizer());
             for(TokenFilter filter : tokenFilters.getTokenFilters())  {
-                String name = filter.getName();
                 List<Param> params = filter.getParams();
                 if (params.size() > 0) {
                     Map<String, String> paramMap = new HashMap<>();
