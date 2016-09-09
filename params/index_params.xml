@@ -3,4 +3,5 @@
     <indexName>index</indexName>
     <fileList>data/cacm_file_list</fileList>
     <indexType>cacm</indexType>
+    <tokenFilterFile>params/token_filter_params.xml</tokenFilterFile>
 </indexParams>

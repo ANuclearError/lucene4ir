@@ -1,26 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <tokenFilters>
     <tokenizer>standard</tokenizer>
-    <resourceDir>/path/to/config/dir</resourceDir>
     <tokenFilter>
         <name>lowercase</name>
     </tokenFilter>
     <tokenFilter>
         <name>porterstem</name>
-    </tokenFilter>
-    <tokenFilter>
-        <name>stop</name>
-        <param>
-            <key>ignoreCase</key>
-            <value>False</value>
-        </param>
-        <param>
-            <key>words</key>
-            <value>stopwords.txt</value>
-        </param>
-        <param>
-            <key>format</key>
-            <value>wordset</value>
-        </param>
     </tokenFilter>
 </tokenFilters>

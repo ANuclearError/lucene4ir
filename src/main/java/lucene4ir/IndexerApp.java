@@ -127,11 +127,11 @@ public class IndexerApp {
 
     }
 
-    public IndexerApp(String indexParamFile, String tokenFilterFile){
+    public IndexerApp(String indexParamFile){
         System.out.println("Indexer App");
         readIndexParamsFromFile(indexParamFile);
         setDocParser(p.indexType);
-        selectDocumentParser(docModel, tokenFilterFile);
+        selectDocumentParser(docModel, p.tokenFilterFile);
     }
 
     public void indexDocumentsFromFile(String filename){
@@ -148,18 +148,16 @@ public class IndexerApp {
 
 
         String indexParamFile = "";
-        String tokenFilterFile = "";
 
         try {
             indexParamFile = args[0];
-            tokenFilterFile = args[1];
         } catch(Exception e){
             System.out.println(" caught a " + e.getClass() +
                     "\n with message: " + e.getMessage());
             System.exit(1);
         }
 
-        IndexerApp indexer = new IndexerApp(indexParamFile, tokenFilterFile);
+        IndexerApp indexer = new IndexerApp(indexParamFile);
 
         try {
             ArrayList<String> files = indexer.readFileListFromFile();
@@ -182,6 +180,7 @@ class IndexParams {
     public String indexName;
     public String fileList;
     public String indexType; /** trecWeb, trecNews, trec678, cacm **/
+    public String tokenFilterFile;
     public Boolean compressed;
 }
 
