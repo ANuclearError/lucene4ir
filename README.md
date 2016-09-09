@@ -58,24 +58,36 @@ Go to the Run menu, and select Edit Configurations. In the top left hand side of
 
 ### Eclipse Setup
 #### Project creation and build path configuration
-1. Start a new java project using File->Import...->Existing Maven project
-2. Uncheck Use default location option and set Project name to Lucene. 
+1. Start a new java project using File->New->Java Project.
+2. Uncheck Use default location option and set Project name to Lucene.
 3. Set the location option to the path PATH/TO/lucene4IR/ and click Finish.
+4. We would have to add lucene jars to  project buildpath so as to remove compilation errors.
+   a. Right click on package name in package explorer and select Properties.
+   b. Click on Java Build Path -> Libraries.
+   c. Click on Add Library->User library->User libraries.
+   d. Create a new library by clicking on New with name lucene. Click on Add External Jars.
+   e. Select all Jars in jar folder provided with lucene4IR package
+      and press OK and Finish and Apply on Java Build path window.
+   f. To parse and index clueweb documents we need Jsoup parser. Also add jsoup-1.9.2.jar to build path.
+      Right click on project and select Java Build Path -> Libraries -> Add External Jars. Add the jsoup jar
+      from lucene4ir/jars/html_parser directory.
+
 
 ####Class Execution
 
 Classes with main method can be executed by right clicking on class name, selecting Run As option and selecting Java application.
-If a class needs command line parameters, right click and select Run configuration. Add the parameters in Arguments tab of Run 
+If a class needs command line parameters, right click and select Run configuration. Add the parameters in Arguments tab of Run
 Configurations window. Example parameter arguments for IndexerApp and RetrievalApp are as follows:
 
 IndexerApp:  params/index_params.xml
 RetrievalApp: params/retrieval_params.xml
 
 ####JAR creation.
+To create an executable Jar, right click on the project and select Export -> Java.
+Uncheck the lucene4IR package, select src and jars folders. Choose a suitable
+PATH_TO_JAR in Jar File option and select Finish. A jar file shall be created at PATH_TO_JAR.
 
-run `mvn package` from the shell, executable jar will be in `target/lucene4ir-0.0.1-SNAPSHOT.jar` 
-
-## Console Setup
+### Console Setup
 TBA
 
 
@@ -85,7 +97,7 @@ Now that you have these applications set up, you can try them out. First, run th
 
 Then you can run the ExampleStatsApp, this will read in the CACM index, and spit out some different statistics. Finally, you can run the RetrievalApp, which will take a list of queries, and run them against the index using BM25, and save the results to a result file (~/lucene4ir/data/cacm/bm25_results.res).
 
-To evaluate the output you will need to download and install the trec_eval from NIST, http://trec.nist.gov/trec_eval/ 
+To evaluate the output you will need to download and install the trec_eval from NIST, http://trec.nist.gov/trec_eval/
 
 In ~/lucene4ir/data/cacm/ the list of documents relevant to each query is in the file, cacm.qrels, using trec_eval, we can measure the precision, recall, etc:
 
@@ -124,7 +136,7 @@ P1000          	all	0.0052
 
 ### IndexerApp
 
-The Indexer Application lets you specific the type of TREC documents to be indexed and location of the index. 
+The Indexer Application lets you specific the type of TREC documents to be indexed and location of the index.
 
 Below is an example of the index parameters
 
@@ -145,8 +157,60 @@ where:
 	- *trecnews*: TREC 123 Newspaper articles
 	- *trecaquaint*: TREC Aquaint Newspaper collection
 	- *clueweb*: TREC Clueweb
-	 
+
 In the data directory we have provided some sample files to show how the indexing works.
+
+#### Indexing Process
+When plain text is passed to Lucene for indexing and querying it goes through the process of analysis.
+This process starts with so called tokenization where the stream of text is broken into small indexing elements called tokens.
+Besides breaking text into tokens a deeper analysis of those tokens (adding synonyms, removing stopwords, altering tokens by stemming) might be required.
+To customize analysis you have to build a [```CustomAnalyzer```](https://lucene.apache.org/core/6_2_0/analyzers-common/org/apache/lucene/analysis/custom/CustomAnalyzer.html) in the ```DocumentIndexer```
+
+```
+Analyzer analyzer = CustomAnalyzer.builder(Paths.get("/path/to/config/dir"))
+                    .withTokenizer("standard")
+                    .addTokenFilter("lowercase")
+                    .addTokenFilter("porterstem")
+                    .addTokenFilter("stop", "ignoreCase", "false", "words", "stopwords.txt", "format", "wordset")
+                    .build();
+```
+The analyzer allows for several kind of filters to be passed to. Those filters can be addjusted via the ```/params/token_filter_params.xml``` parameter file.
+
+```
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<tokenFilters>
+    <tokenizer>standard</tokenizer>
+    <tokenFilter>
+        <name>lowercase</name>
+    </tokenFilter>
+    <tokenFilter>
+        <name>porterstem</name>
+    </tokenFilter>
+</tokenFilters>
+```
+For TokenFilters that can have multiple parameters you can add those via ```<key> <value> ``` pairs in a ```<param>`` tag.
+
+```
+    <tokenFilter>
+        <name>stop</name>
+        <param>
+            <key>ignoreCase</key>
+            <value>false</value>
+        </param>
+        <param>
+            <key>words</key>
+            <value>stopwords.txt</value>
+        </param>
+        <param>
+            <key>format</key>
+            <value>wordset</value>
+        </param>
+    </tokenFilter>
+</tokenFilters>
+
+```
+Two things to keep in mind:  The analysis you do at index time should also be done at query time to have matching tokens.
+Certain Filters expect tokens to be in a certain form (e.g. already lowercased) so the order of ```TokenFilters``` can be of impact.
 
 ### RetrievalApp
 
@@ -195,18 +259,3 @@ Once you have indexed a collection, simply specify the location of the index.
     <indexName>index</indexName>
 </exampleStatsParams>
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
