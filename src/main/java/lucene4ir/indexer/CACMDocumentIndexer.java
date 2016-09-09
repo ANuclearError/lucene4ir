@@ -14,9 +14,9 @@ import java.io.FileReader;
  */
 public class CACMDocumentIndexer extends DocumentIndexer {
 
-    public CACMDocumentIndexer(String indexPath){
+    public CACMDocumentIndexer(String indexPath, String tokenFilterFile){
         writer = null;
-        createWriter(indexPath, "params/token_filter_params.xml");
+        createWriter(indexPath, tokenFilterFile);
     }
 
     public static Document createCacmDocument(String docid, String title, String content, String author, String pubdate){

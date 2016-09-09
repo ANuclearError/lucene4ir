@@ -47,13 +47,13 @@ public class IndexerApp {
 
 
 
-    public void selectDocumentParser(DocumentModel dm){
+    public void selectDocumentParser(DocumentModel dm, String tokenFilterfile){
         docModel = dm;
         di = null;
         switch(dm){
             case CACM:
                 System.out.println("CACM Document Parser");
-                di = new CACMDocumentIndexer(p.indexName);
+                di = new CACMDocumentIndexer(p.indexName, tokenFilterfile);
                 break;
 
             case CLUEWEB:
@@ -65,12 +65,12 @@ public class IndexerApp {
 
             case TRECNEWS:
                 System.out.println("TRECNEWS");
-                di = new TRECNEWSDocumentIndexer(p.indexName);
+                di = new TRECNEWSDocumentIndexer(p.indexName, tokenFilterfile);
                 break;
 
             case TRECAQUAINT:
                 System.out.println("TRECAQUAINT");
-                di = new TRECAquaintDocumentIndexer(p.indexName);
+                di = new TRECAquaintDocumentIndexer(p.indexName, tokenFilterfile);
                 break;
 
             default:
@@ -127,11 +127,11 @@ public class IndexerApp {
 
     }
 
-    public IndexerApp(String indexParamFile){
+    public IndexerApp(String indexParamFile, String tokenFilterFile){
         System.out.println("Indexer App");
         readIndexParamsFromFile(indexParamFile);
         setDocParser(p.indexType);
-        selectDocumentParser(docModel);
+        selectDocumentParser(docModel, tokenFilterFile);
     }
 
     public void indexDocumentsFromFile(String filename){
@@ -148,16 +148,18 @@ public class IndexerApp {
 
 
         String indexParamFile = "";
+        String tokenFilterFile = "";
 
         try {
             indexParamFile = args[0];
+            tokenFilterFile = args[1];
         } catch(Exception e){
             System.out.println(" caught a " + e.getClass() +
                     "\n with message: " + e.getMessage());
             System.exit(1);
         }
 
-        IndexerApp indexer = new IndexerApp(indexParamFile);
+        IndexerApp indexer = new IndexerApp(indexParamFile, tokenFilterFile);
 
         try {
             ArrayList<String> files = indexer.readFileListFromFile();

@@ -37,9 +37,9 @@ public class DocumentIndexer {
 
     public DocumentIndexer(){};
 
-    public DocumentIndexer(String indexPath){
+    public DocumentIndexer(String indexPath, String tokenFilterFile){
         writer = null;
-        createWriter(indexPath, "params/token_filter_params.xml");
+        createWriter(indexPath, tokenFilterFile);
     }
 
     protected void finalize(){
@@ -65,10 +65,16 @@ public class DocumentIndexer {
         try {
             Directory dir = FSDirectory.open(Paths.get(indexPath));
             System.out.println("Indexing to directory '" + indexPath + "'...");
-            CustomAnalyzer.Builder builder = CustomAnalyzer.builder();
-
             TokenFilters tokenFilters = JAXB.unmarshal(new File(tokenFilterFile), TokenFilters.class);
-            System.out.println(tokenFilters.getTokenizer());
+
+            CustomAnalyzer.Builder builder;
+            if (tokenFilters.getResourceDir() != null) {
+                builder = CustomAnalyzer.builder(Paths.get(tokenFilters.getResourceDir()));
+            }
+            else {
+                builder = CustomAnalyzer.builder();
+            }
+
             builder.withTokenizer(tokenFilters.getTokenizer());
             for(TokenFilter filter : tokenFilters.getTokenFilters())  {
                 String name = filter.getName();
@@ -130,6 +136,8 @@ public class DocumentIndexer {
 class TokenFilters {
     private String tokenizer;
 
+    private String resourceDir;
+
     @XmlElement(name = "tokenFilter", type = TokenFilter.class)
     private List<TokenFilter> tokenFilters = new ArrayList<>();
 
@@ -146,6 +154,14 @@ class TokenFilters {
 
     public void setTokenizer(String tokenizer) {
         this.tokenizer = tokenizer;
+    }
+
+    public String getResourceDir() {
+        return resourceDir;
+    }
+
+    public void setResourceDir(String resourceDir) {
+        this.resourceDir = resourceDir;
     }
 
     public List<TokenFilter> getTokenFilters() {

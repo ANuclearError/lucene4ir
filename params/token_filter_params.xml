@@ -7,15 +7,4 @@
     <tokenFilter>
         <name>porterstem</name>
     </tokenFilter>
-    <tokenFilter>
-        <name>stop</name>
-            <param>
-                <key>ignoreCase</key>
-                <value>false</value>
-            </param>
-            <param>
-                <key>format</key>
-                <value>wordset</value>
-            </param>
-    </tokenFilter>
 </tokenFilters>
