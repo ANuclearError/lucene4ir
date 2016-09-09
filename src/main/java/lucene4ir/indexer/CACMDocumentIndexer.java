@@ -16,7 +16,7 @@ public class CACMDocumentIndexer extends DocumentIndexer {
 
     public CACMDocumentIndexer(String indexPath){
         writer = null;
-        createWriter(indexPath);
+        createWriter(indexPath, "params/token_filter_params.xml");
     }
 
     public static Document createCacmDocument(String docid, String title, String content, String author, String pubdate){

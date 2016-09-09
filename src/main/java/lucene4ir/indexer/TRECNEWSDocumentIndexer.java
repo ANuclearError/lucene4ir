@@ -20,7 +20,7 @@ import javax.xml.xpath.XPathFactory;
 public class TRECNEWSDocumentIndexer extends DocumentIndexer {
     public TRECNEWSDocumentIndexer(String indexPath){
         writer = null;
-        createWriter(indexPath);
+        createWriter(indexPath, "params/token_filter_params.xml");
     }
 
     public void indexDocumentsFromFile(String filename){

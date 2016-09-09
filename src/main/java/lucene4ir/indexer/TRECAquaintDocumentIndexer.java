@@ -41,7 +41,7 @@ public class TRECAquaintDocumentIndexer extends DocumentIndexer  {
                     "\n with message: " + e.getMessage());
         }
 
-        createWriter(indexPath);
+        createWriter(indexPath, "params/token_filter_params.xml");
     }
 
     public static Document createTrecAquaintDocument(String docid, String title, String content, String source, String pubdate){
